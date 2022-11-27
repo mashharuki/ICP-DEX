@@ -11,6 +11,7 @@ Motokoは、DFINITY財団が開発中の新しいソフトウェア言語で、�
 dfx new icp__dex
 ```
 
+
 上手く行くと次のように出力される。
 
 ```zsh
