@@ -42,8 +42,9 @@ If you want to work on programs right away, try the following commands to get st
 
 ### ローカルのキャニスター実行するコマンド
 
-```zsh
-cd icp__dex && dfx start --clean --background
+```shell
+$ cd icp__dex
+$ dfx start --clean --background
 ```
 
 stopする場合
@@ -153,7 +154,62 @@ rm -rf .dfx
 
 ### テストコマンドの実行方法
 
+```zsh
+sh scripts/test.sh
+```
 
+result of test
+
+```zsh
+#------ faucet ------------
+Using identity: "user1".
+-n getToken    >  
+(variant { Ok = 1_000 : nat })
+-n balanceOf   >  
+(1_000 : nat)
+-e #------ faucet { Err = variant { AlreadyGiven } } ------------
+(variant { Err = variant { AlreadyGiven } })
+-e
+Using identity: "user2".
+-n getTOken    >  
+(variant { Ok = 1_000 : nat })
+-n balanceOf   >  
+(1_000 : nat)
+-e 
+
+#------ deposit ------------
+Using identity: "user1".
+(variant { Ok = 6 : nat })
+-n deposit     >  
+(variant { Ok = 1_000 : nat })
+-n getBalance  >  
+(1_000 : nat)
+-e
+Using identity: "user2".
+(variant { Ok = 6 : nat })
+-n deposit     >  
+(variant { Ok = 1_000 : nat })
+-n getBalance  >  
+(1_000 : nat)
+-e 
+
+#------ withdraw ------
+Using identity: "user1".
+-n withdraw    >  
+(variant { Ok = 500 : nat })
+-n balanceOf   >  
+(500 : nat)
+-n DEX balanceOf>  
+(500 : nat)
+-e #----- withdraw (check { Err = variant { BalanceLow } } -----
+(variant { Err = variant { BalanceLow } })
+-e 
+
+#------ clean user ------
+Using identity: "default".
+Removed identity "user1".
+Removed identity "user2".
+```
 
 ### 参考文献
 1. [Motoko](https://internetcomputer.org/docs/current/developer-docs/build/cdks/motoko-dfinity/motoko/)
