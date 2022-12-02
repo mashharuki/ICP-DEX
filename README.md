@@ -10,6 +10,18 @@ Motokoは、DFINITY財団が開発中の新しいソフトウェア言語で、�
 
 Psychedelicという組織が作成したトークン標準になります。これは、ERC-20のトークン標準をICP上でも利用できるようにMotokoとRustで実装されています。
 
+### Internet Identity
+
+Internet Identityは、ICPがサポートするユーザー認証のフレームワークです。ユーザーは、認証にラップトップの指紋センサーや顔認証システムなどのデバイスと**アンカー（Anchor）**と呼ばれる数字を紐付けることが可能となる。その後、アンカーに紐づけたデバイスを利用して、さまざまなアプリケーションにサインアップし認証を行うことができる。
+
+### stable
+
+変数の宣言にstableキーワードを使用することで、その変数をステーブルなメモリ領域に保存することを指示できる。
+
+### preupgrade と postupgrade
+
+実は、全ての型の変数がstableキーワードで解決できる訳ではありません。例えばHashMapが挙げられます。ステーブル変数だけでは解決できない場合のために、Motokoはユーザー定義のアップグレードフックをサポートしています。このフックは、アップグレードの前後に実行されるものでpreupgradeとpostupgradeという特別な名前を持つsystem関数として宣言されます。アップグレード前に、ステーブルを定義できない変数からステーブル変数へデータを保存し、アップグレード後に元の型へ戻すというフックを定義するという使い方をします。
+
 ### dfxのテンプレプロジェクト作成コマンド
 
 ```zsh
@@ -102,6 +114,58 @@ Deployed canisters.
 URLs:
   Backend canister via Candid interface:
     GoldDIP20: http://127.0.0.1:8000/?canisterId=ryjl3-tyaaa-aaaaa-aaaba-cai&id=rrkah-fqaaa-aaaaa-aaaaq-cai
+```
+
+### メインネットへデプロイする方法
+
+```zsh
+export ROOT_PRINCIPAL=$(dfx identity get-principal)
+```
+
+```bash
+$ dfx deploy GoldDIP20 --argument='("Token Gold Logo", "Token Gold", "TGLD", 8, 1_000_000_000_000, principal '\"$ROOT_PRINCIPAL\"', 0)'  --network ic --with-cycles 1000000000000
+$ dfx deploy SilverDIP20 --argument='("Token Silver Logo", "Token Silver", "TSLV", 8, 1_000_000_000_000, principal '\"$ROOT_PRINCIPAL\"', 0)'  --network ic --with-cycles 1000000000000
+$ dfx deploy faucet --network ic --with-cycles 1000000000000
+```
+
+```zsh
+export IC_FAUCET_PRINCIPAL=$(dfx canister id --network ic faucet)
+```
+
+トークンをミントしてプールを作成します。
+
+```bash
+$ dfx canister call  --network ic GoldDIP20 mint '(principal '\"$IC_FAUCET_PRINCIPAL\"', 100_000)'
+$ dfx canister call --network ic GoldDIP20 balanceOf '(principal '\"$IC_FAUCET_PRINCIPAL\"')'
+$ dfx canister call  --network ic SilverDIP20 mint '(principal '\"$IC_FAUCET_PRINCIPAL\"', 100_000)'
+$ dfx canister call --network ic SilverDIP20 balanceOf '(principal '\"$IC_FAUCET_PRINCIPAL\"')'
+```
+
+メインとなるキャニスターをデプロイする
+
+```bash
+$ dfx deploy icp__dex_backend --network ic --with-cycles 1000000000000
+$ dfx deploy icp__dex_frontend --network ic --with-cycles 1000000000000
+```
+
+デプロイされたキャニスターの情報を確認するコマンド
+
+```bash
+$ dfx canister status --network ic icp__dex_backend
+$ dfx canister status --network ic icp__dex_frontend
+```
+
+デプロイした参考情報
+
+```zsh
+URLs:
+  Frontend canister via browser
+    icp__dex_frontend: https://6xxmo-qiaaa-aaaag-aa3yq-cai.ic0.app/
+  Backend canister via Candid interface:
+    GoldDIP20: https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.ic0.app/?id=4djj2-viaaa-aaaag-aa3wq-cai
+    SilverDIP20: https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.ic0.app/?id=4kkcg-daaaa-aaaag-aa3xa-cai
+    faucet: https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.ic0.app/?id=4nles-oyaaa-aaaag-aa3xq-cai
+    icp__dex_backend: https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.ic0.app/?id=6qwk2-5qaaa-aaaag-aa3ya-cai
 ```
 
 ### メタデータを獲得するコマンド
@@ -211,9 +275,16 @@ Removed identity "user1".
 Removed identity "user2".
 ```
 
+### 残高確認コマンド
+
+```bash
+$ dfx wallet --network=ic balance
+```
+
 ### 参考文献
 1. [Motoko](https://internetcomputer.org/docs/current/developer-docs/build/cdks/motoko-dfinity/motoko/)
 2. [The Motoko base library](https://github.com/dfinity/motoko-base)
 3. [Smacon dev](https://smacon.dev/)
 4. [Backend Tutorial](https://internetcomputer.org/docs/current/developer-docs/build/backend/explore-templates)
 5. [Motoko Example](https://github.com/dfinity/examples/tree/master/motoko)
+6. [【GitHub】internet-identity](https://github.com/dfinity/internet-identity/releases)
