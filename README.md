@@ -288,3 +288,7 @@ $ dfx wallet --network=ic balance
 4. [Backend Tutorial](https://internetcomputer.org/docs/current/developer-docs/build/backend/explore-templates)
 5. [Motoko Example](https://github.com/dfinity/examples/tree/master/motoko)
 6. [【GitHub】internet-identity](https://github.com/dfinity/internet-identity/releases)
+7. [BLS署名と秘密分散を組み合わせる - Qita](https://qiita.com/herumi/items/535c58ae906111d7fb80)
+8. [BLS署名の紹介と実装 - Qita](https://qiita.com/herumi/items/e69721380278c5a30d01)
+9. [DfinityコンセンサスにおけるBLS署名の応用事例を考える](https://medium.com/layerx-jp/dfinity%E3%82%B3%E3%83%B3%E3%82%BB%E3%83%B3%E3%82%B5%E3%82%B9%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8Bbls%E7%BD%B2%E5%90%8D%E3%81%AE%E5%BF%9C%E7%94%A8%E4%BA%8B%E4%BE%8B%E3%82%92%E8%80%83%E3%81%88%E3%82%8B-c010fb54fc3e)
+10. [[Dfinity] chain key技術の簡単な解説　part1](https://hide.ac/articles/Tr48xoL2m)
